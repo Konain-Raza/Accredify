@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://your-logo-url.com/logo.png" alt="Accredify Logo" width="200">
+  <img src="icon.png" alt="Accredify Logo" width="200">
 </p>
 
 <h1 align="center">Accredify</h1>
