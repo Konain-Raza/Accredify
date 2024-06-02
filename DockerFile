@@ -1,0 +1,17 @@
+# Use a base image with necessary dependencies for your C++ program
+FROM gcc:latest
+
+# Install pdflatex compiler
+RUN apt-get update && apt-get install -y texlive
+
+# Set working directory inside the container
+WORKDIR /app
+
+# Copy the entire project directory into the container
+COPY . .
+
+# Compile the C++ program
+RUN g++ main.cpp -o main
+
+# Default command to run when the container starts
+CMD ["./main"]
