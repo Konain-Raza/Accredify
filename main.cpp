@@ -253,7 +253,7 @@ void generateCertificates(LinkedList &list, string templateFilename, string outp
 int main()
 {
     LinkedList nameList;
-    string templateFileName, certificateName, organizationName, logoFilename, certificateDate, csvFilePath;
+    string templateFileName, logoDestination, certificateName, organizationName, logoFilename, certificateDate, csvFilePath;
     cout << "##########################################################\n";
     cout << "#                                                        #\n";
     cout << "#            Accredify - Bulk Certificate Maker          #\n";
@@ -272,7 +272,7 @@ int main()
     getline(cin, organizationName);
 
     cout << "4. Enter the file path of your organization's logo with the extension: (e.g., /logo.png)";
-    getline(cin, logoFilename);
+    getline(cin, logoDestination);
 
     cout << "5. Enter the certification issue date (e.g., June 2, 2024): ";
     getline(cin, certificateDate);
