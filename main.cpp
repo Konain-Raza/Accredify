@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>    // for file handling
 #include <filesystem> // for creating folder and files
-#include <cctype>     // for to tolower funtion
+#include <cctype>     // for tolower function
 #include <stdexcept>  // for catching errors
 using namespace std;
 
@@ -11,13 +11,14 @@ public:
     string name; // data
     Node *next;  // next pointer
 
-    Node(const string &name)
+    Node(string name)
     {
         this->name = name;
         this->next = nullptr;
     }
 };
-// singly linked list
+
+// Singly linked list
 class LinkedList
 {
 public:
@@ -25,8 +26,9 @@ public:
     {
         head = nullptr;
     }
-    // for storing all names from csv file in linked list
-    void append(const string &name)
+    
+    // For storing all names from the CSV file in the linked list
+    void append(string name)
     {
         Node *newNode = new Node(name);
         if (!head)
@@ -43,14 +45,17 @@ public:
             temp->next = newNode;
         }
     }
-    // sort names alphabetically
+    
+    // Sort names alphabetically
     void sort()
     {
         if (!head || !head->next)
-            return;
-        for (Node *i = head; i->next; i = i->next)
         {
-            for (Node *j = i->next; j; j = j->next)
+            return;
+        }
+        for (Node *i = head; i->next != nullptr; i = i->next)
+        {
+            for (Node *j = i->next; j != nullptr; j = j->next)
             {
                 if (tolower(i->name[0]) > tolower(j->name[0]))
                 {
@@ -60,7 +65,7 @@ public:
         }
     }
 
-    Node *getHead() const
+    Node *getHead()
     {
         return head;
     }
@@ -79,7 +84,7 @@ private:
     Node *head;
 };
 
-void readNamesFromCSV(const string &filename, LinkedList &list) // append all names from csv file in linked list
+void readNamesFromCSV(const string &filename, LinkedList &list) // Append all names from CSV file in linked list
 {
     ifstream file(filename);
     if (!file.is_open())
@@ -89,14 +94,15 @@ void readNamesFromCSV(const string &filename, LinkedList &list) // append all na
 
     string line;
 
-    while (getline(file, line)) // store all names and append into linkedlist till file is not finish
+    while (getline(file, line)) // Store all names and append into linked list until file is finished
     {
         list.append(line);
     }
     file.close();
 }
-// read latex template file
-string readTemplateFile(string filename)
+
+// Read LaTeX template file
+string readTemplateFile(const string &filename)
 {
     string content;
     ifstream templateFile(filename);
@@ -106,7 +112,7 @@ string readTemplateFile(string filename)
     }
 
     char data;
-    while (templateFile.get(data)) // store whole content of latex template
+    while (templateFile.get(data)) // Store whole content of LaTeX template
     {
         content += data;
     }
@@ -114,25 +120,27 @@ string readTemplateFile(string filename)
 
     return content;
 }
-// replace placeholder in latex file
+
+// Replace placeholder in LaTeX file
 void replacePlaceholder(string &content, const string &placeholder, const string &replacement)
 {
     try
     {
-        size_t pos = content.find(placeholder);
+        string::size_type pos = content.find(placeholder);
         while (pos != string::npos)
         {
             content.replace(pos, placeholder.length(), replacement);
             pos = content.find(placeholder, pos + replacement.length());
         }
     }
-    catch (const std::exception &e)
+    catch (const exception &e)
     {
         cout << e.what() << '\n';
     }
 }
-// compile latex .tex file into pdf
-void compilePDF(string latexFile, string outputFolder)
+
+// Compile LaTeX .tex file into PDF
+void compilePDF(const string &latexFile, const string &outputFolder)
 {
     try
     {
@@ -148,8 +156,9 @@ void compilePDF(string latexFile, string outputFolder)
         cout << e.what() << '\n';
     }
 }
-// generate certifcates for all names in linked list and place in outputFolder
-void generateCertificates(LinkedList &list, string templateFilename, string outputFolder, string logoFilename, string certificateName, string organizationName, string certificateDate)
+
+// Generate certificates for all names in linked list and place in outputFolder
+void generateCertificates(LinkedList &list, const string &templateFilename, const string &outputFolder, const string &logoFilename, const string &certificateName, const string &organizationName, const string &certificateDate)
 {
     try
     {
@@ -179,7 +188,8 @@ void generateCertificates(LinkedList &list, string templateFilename, string outp
         int completedCertificates = 0;
         float progress = 0.0f;
         int progressBarWidth = 50;
-        // remove whitespaces from filenames and marge
+
+        // Remove whitespaces from filenames and merge
         while (current)
         {
             string nameWithoutSpaces;
@@ -193,7 +203,7 @@ void generateCertificates(LinkedList &list, string templateFilename, string outp
 
             string certificateContent = templateContent;
 
-            // replacing placeholder from latex template for every name
+            // Replacing placeholder from LaTeX template for every name
             replacePlaceholder(certificateContent, "ApplicantName", current->name);
             replacePlaceholder(certificateContent, "LOGO_FILENAME", logoFilename);
             replacePlaceholder(certificateContent, "CertificateName", certificateName);
@@ -218,7 +228,7 @@ void generateCertificates(LinkedList &list, string templateFilename, string outp
             // Calculate progress percentage
             progress = (float)completedCertificates / totalCertificates * 100;
 
-            //  progress bar
+            // Progress bar
             cout << "Progress: [";
             int pos = progressBarWidth * progress / 100;
             for (int i = 0; i < progressBarWidth; ++i)
@@ -236,7 +246,7 @@ void generateCertificates(LinkedList &list, string templateFilename, string outp
 
         cout << endl;
 
-        for (const auto &entry : filesystem::directory_iterator(outputFolder)) // deleting unecessary files other than pdf
+        for (const auto &entry : filesystem::directory_iterator(outputFolder)) // deleting unnecessary files other than pdf
         {
             if (entry.path().extension() != ".pdf")
             {
@@ -247,13 +257,15 @@ void generateCertificates(LinkedList &list, string templateFilename, string outp
     catch (const exception &ex)
     {
         cout << ex.what() << endl;
+        exit(0);
     }
 }
 
 int main()
 {
     LinkedList nameList;
-    string templateFileName, logoDestination, certificateName, organizationName, logoFilename, certificateDate, csvFilePath;
+    string templateFileName, certificateName, organizationName, logoFilename, certificateDate, csvFilePath;
+    logoFilename = "icon.png";
     cout << "##########################################################\n";
     cout << "#                                                        #\n";
     cout << "#            Accredify - Bulk Certificate Maker          #\n";
@@ -271,10 +283,7 @@ int main()
     cout << "3. Enter the name of your organization: ";
     getline(cin, organizationName);
 
-    cout << "4. Enter the file path of your organization's logo with the extension: (e.g., /logo.png)";
-    getline(cin, logoDestination);
-
-    cout << "5. Enter the certification issue date (e.g., June 2, 2024): ";
+    cout << "4. Enter the certification issue date (e.g., June 2, 2024): ";
     getline(cin, certificateDate);
 
     try
